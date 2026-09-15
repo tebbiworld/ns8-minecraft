@@ -27,7 +27,7 @@ permissions:
 env:
   UPSTREAM_IMAGES: "docker.io/itzg/minecraft-server"
   TAG_REGEX: '^(?P<ver>\d{4}\.\d+\.\d+)-java25$'
-  UPSTREAM_NAME: "Plex Media Server"
+  UPSTREAM_NAME: "itzg/minecraft-server"
   PIN_FILES: "build-images.sh"
   MIN_DAYS: "42"
   MODULE: "minecraft"
