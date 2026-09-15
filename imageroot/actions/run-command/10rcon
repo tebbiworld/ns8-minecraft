@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+#
+# Copyright (C) 2026 tebbi
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+# Run a server console command through rcon-cli inside the container and
+# return its output (e.g. "list", "whitelist add Steve", "save-all").
+
+import json
+import subprocess
+import sys
+
+import agent
+
+data = json.load(sys.stdin)
+command = data["command"].strip().lstrip("/")
+try:
+    proc = subprocess.run(["podman", "exec", "minecraft", "rcon-cli", command],
+                          capture_output=True, text=True, timeout=30)
+except subprocess.TimeoutExpired:
+    print(agent.SD_ERR + "rcon-cli timed out", file=sys.stderr)
+    sys.exit(1)
+if proc.returncode != 0:
+    print(agent.SD_ERR + (proc.stderr.strip() or "rcon-cli failed (server not running?)"), file=sys.stderr)
+    sys.exit(1)
+json.dump({"output": proc.stdout.strip()}, fp=sys.stdout)

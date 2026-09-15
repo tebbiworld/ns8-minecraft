@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+#
+# Copyright (C) 2026 tebbi
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+# Carry the settings of the backed-up instance over to the new one. The RCON
+# password must stay the original: it is already stored in the restored world
+# volume's server.properties.
+
+import json
+import sys
+
+import agent
+
+request = json.load(sys.stdin)
+env = request["environment"]
+keep = ["RCON_PASSWORD", "EULA_ACCEPTED", "SERVER_TYPE", "MC_VERSION", "MEMORY_MB", "GAME_PORT", "BEDROCK_ENABLED",
+        "BEDROCK_PORT", "MOTD", "GAMEMODE", "DIFFICULTY", "MAX_PLAYERS", "PVP", "ONLINE_MODE", "WHITELIST", "OPS", "SEED", "TZ"]
+agent.mset_env({k: env[k] for k in keep if k in env})

@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "run-command input",
+    "$id": "http://nethserver.org/json-schema/task/input/minecraft/run-command",
+    "description": "Send a console command to the running server via RCON",
+    "examples": [{ "command": "say Server restarts in 5 minutes" }],
+    "type": "object",
+    "required": ["command"],
+    "properties": {
+        "command": { "type": "string", "minLength": 1, "maxLength": 1000 }
+    }
+}

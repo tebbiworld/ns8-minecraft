@@ -1,0 +1,91 @@
+======Minecraft Server======
+A [[https://www.minecraft.net/|Minecraft]] server for the Java Edition — optionally reachable for Bedrock Edition clients (phones, tablets, consoles, Windows app) as well — built on the widely used [[https://github.com/itzg/docker-minecraft-server|itzg/minecraft-server]] image: Paper, Vanilla or Fabric server, world rules, whitelist and operators from the settings page, server console, world backup.
+
+====Announcement and talks====
+The Minecraft Server app announcement TBA
+
+Minecraft Server is a community application from the [[ns8:tebbiworld_repository|tebbiworld]] repository. Documentation and source can be found on [[https://github.com/tebbiworld/ns8-minecraft|Github]]
+
+=====What it does=====
+  * one rootless container with the pinned ''itzg/minecraft-server'' image (Java 25); the server software itself (Paper, Vanilla or Fabric, version ''LATEST'', ''SNAPSHOT'' or fixed) is downloaded into the data volume at start
+  * **Bedrock Edition** players join through Geyser + Floodgate (Paper only), the latest builds from the official GeyserMC download API, fetched at every start
+  * MOTD, game mode, difficulty, max players, PvP, online mode, seed, **whitelist** and **operators** (synchronised at every start), free-form additional variables for everything else the image supports (view distance, mods/plugins via Modrinth, modpacks, …)
+  * the game port(s) are chosen in the settings, published on the node and opened on the node firewall as a public service
+  * **server console** on the settings page (RCON), also available as the ''run-command'' action
+  * NS8 backup of the world volume with auto-save paused for a consistent copy; full restore
+
+=====Architecture=====
+
+^ Container ^ Image ^ Purpose ^
+| ''minecraft'' | ''docker.io/itzg/minecraft-server:<version>-java25'' (pinned) | game server; 25565/tcp (Java) and 19132/udp (Bedrock) published on the configured ports; RCON 25575 internal only |
+
+^ Volume ^ Purpose ^ Backup ^
+| ''minecraft-data'' | server jar, worlds, plugins/mods, ''server.properties'', ''whitelist.json'', ''ops.json'' | yes |
+
+=====Installation=====
+On the NethServer 8 cluster leader:
+
+<code bash>
+add-module ghcr.io/tebbiworld/minecraft:latest 1
+</code>
+
+or from the Software Center after adding the [[ns8:tebbiworld_repository|tebbiworld repository]].
+
+=====Configuration=====
+Open the instance settings:
+
+  * **Minecraft EULA** — must be accepted, the server refuses to start otherwise ([[https://aka.ms/MinecraftEULA]])
+  * **Server type** — Paper (recommended: fast, plugins, required for Bedrock), Vanilla (Mojang's unmodified server) or Fabric (mods)
+  * **Minecraft version** — ''LATEST'' installs the newest release at every server start; a fixed version such as ''1.21.8'' keeps the world there. Minecraft cannot downgrade a world.
+  * **Java heap** — memory for the JVM; 2048 MB for a few players, more for Paper with plugins or many players. The node needs enough memory left.
+  * **Java Edition port** (TCP, default 25565) and, with Bedrock support, the **Bedrock port** (UDP, default 19132)
+  * **World and rules** — MOTD, game mode, difficulty, max players, PvP, online mode (verify players with Mojang; switch off only for LAN/offline servers — then anyone joins under any name), seed (used only when the world is created)
+  * **Players** — whitelist (empty: everybody may join) and operators, one name per line; written to the server files at every start, removals included
+  * **Additional server variables** — ''KEY=VALUE'' per line, applied after the generated settings, e.g. ''VIEW_DISTANCE=12'', ''SPAWN_PROTECTION=0'', ''MODRINTH_PROJECTS=...'' (plugins/mods), see the [[https://docker-minecraft-server.readthedocs.io/|image documentation]]. Variables managed by the page (''EULA'', ''TYPE'', ''VERSION'', ''MEMORY'', ''RCON_*'', ''SERVER_PORT'', ''REMOVE_OLD_MODS*'', ''PLUGINS'' while Bedrock is on, …) are refused.
+
+''server.properties'' is regenerated from the settings at every start, so a change on the page always wins over a hand-edited file.
+
+The first start downloads the server for the requested version (internet access required) and generates the world — allow a few minutes. The settings page shows the live state (version, players online) and the addresses to connect to.
+
+====Server console====
+The settings page sends console commands to the running server through RCON: ''list'', ''say Hello'', ''whitelist add Steve'', ''op Alex'', ''time set day'', ''save-all'', … From the leader node:
+
+<code bash>
+api-cli run module/minecraft1/run-command --data '{"command":"list"}'
+</code>
+
+=====Connecting=====
+Java Edition: ''<node IP or name>:<port>''. Bedrock Edition: the same host with the UDP port (add the server manually in the Bedrock client). For players outside the LAN forward the port(s) on the router to the node; the node firewall is opened by the module.
+
+=====Backup and restore=====
+The NS8 backup contains the module settings and the ''minecraft-data'' volume. Right before the snapshot the module flushes the world to disk and pauses auto-saving (''save-all flush'', ''save-off''), afterwards auto-saving resumes (''save-on''); a stopped server is backed up as is. A restore recreates the instance from the snapshot, re-applies the settings and the firewall service and starts the server on the restored world.
+
+=====Updates=====
+The module pins the ''itzg/minecraft-server'' image. A weekly GitHub Action checks Docker Hub for a newer ''YYYY.M.N-java25'' tag that is at least six weeks old and releases a new module version; the Software Center update restarts the server. The Minecraft version itself follows the setting (''LATEST'' = newest release at every start).
+
+=====Resources=====
+Java heap as configured plus about 0.5 GB for the JVM and the image tooling; disk grows with the world (hundreds of MB to several GB). Several instances per node are possible with different ports.
+
+=====Licences and trademarks=====
+Unofficial, community-built package, not affiliated with or endorsed by Mojang, Microsoft or the itzg project. "Minecraft" is a trademark of Mojang Synergies AB / Microsoft and is used here only to identify the packaged software; the module logo is the official Minecraft icon, used unmodified. The server software is downloaded at runtime and used under the Minecraft EULA; nothing of it is redistributed.
+
+The ''itzg/minecraft-server'' image is Apache-2.0; the module's own code is %%GPL%%-3.0-or-later.
+
+=====Links=====
+
+  * [[https://docker-minecraft-server.readthedocs.io/|itzg/minecraft-server documentation]]
+  * [[https://github.com/itzg/docker-minecraft-server|itzg/minecraft-server on Github]]
+  * [[https://geysermc.org/|GeyserMC (Bedrock support)]]
+  * [[https://github.com/tebbiworld/ns8-minecraft|Module on Github]]
+  * [[https://github.com/tebbiworld/ns8-minecraft/issues|Bug reports]]
+
+=====Disclaimer=====
+Private hobby project, shared as-is. No warranty, no guaranteed support, use at your own risk.
+
+----
+{{tag>application}}
+{{tag>category:MultiMedia}}
+{{tag>status:Alpha}}
+{{tag>certlevel:1}}
+{{tag>repo:tebbiworld}}
+{{tag>description:"Minecraft server (Java Edition, optional Bedrock support) with whitelist, operators, console and world backup"}}

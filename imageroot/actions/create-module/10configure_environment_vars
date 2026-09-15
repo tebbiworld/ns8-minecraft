@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+
+#
+# Copyright (C) 2026 tebbi
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+# Seed the environment for a fresh instance. The RCON password is generated
+# once and kept for the instance lifetime (backup save-off/save-on and the
+# run-command action rely on it). Everything else is applied by
+# configure-module.
+
+import secrets
+
+import agent
+
+agent.mset_env({
+    "RCON_PASSWORD": secrets.token_urlsafe(24),
+    "EULA_ACCEPTED": "false",
+    "SERVER_TYPE": "PAPER",
+    "MC_VERSION": "LATEST",
+    "MEMORY_MB": "2048",
+    "GAME_PORT": "25565",
+    "BEDROCK_ENABLED": "false",
+    "BEDROCK_PORT": "19132",
+    "MINECRAFT_PUBLISH_ARGS": "--publish 25565:25565/tcp",
+    "MOTD": "A NethServer 8 Minecraft server",
+    "GAMEMODE": "survival",
+    "DIFFICULTY": "normal",
+    "MAX_PLAYERS": "20",
+    "PVP": "true",
+    "ONLINE_MODE": "true",
+    "WHITELIST": "",
+    "OPS": "",
+    "SEED": "",
+    "TZ": "UTC",
+})

@@ -1,0 +1,56 @@
+#
+# Copyright (C) 2026 tebbi
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+# Minecraft server: one rootless container running docker.io/itzg/minecraft-server
+# (pinned by the module through org.nethserver.images ->
+# ${MINECRAFT_SERVER_IMAGE}).
+#
+# Ports (MINECRAFT_PUBLISH_ARGS, set by configure-module): the Java Edition
+# port (default 25565/tcp) and, with Bedrock support enabled, the Geyser port
+# (default 19132/udp) are published on all node addresses and opened on the
+# node firewall. RCON stays inside the container network (rcon-cli via
+# podman exec).
+#
+# Storage: minecraft-data (/data: server jar, worlds, plugins, properties).
+# Settings: state/minecraft.env (generated) + state/minecraft-extra.env
+# (additional variables from the settings page; applied last, so they can
+# override the generated ones).
+#
+# Stop: the image's mc-server-runner turns SIGTERM into a clean "stop" (world
+# save), so give it time.
+
+[Unit]
+Description=Minecraft server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+EnvironmentFile=%S/state/environment
+WorkingDirectory=%S/state
+Restart=always
+TimeoutStartSec=300
+TimeoutStopSec=120
+ExecStartPre=/bin/touch %S/state/minecraft.env %S/state/minecraft-extra.env
+ExecStartPre=/bin/rm -f %t/minecraft.pid %t/minecraft.ctr-id
+ExecStart=/usr/bin/podman run \
+    --conmon-pidfile %t/minecraft.pid \
+    --cidfile %t/minecraft.ctr-id \
+    --cgroups=no-conmon \
+    --replace -d --name minecraft \
+    --stop-timeout 90 \
+    $MINECRAFT_PUBLISH_ARGS \
+    --volume minecraft-data:/data:Z \
+    --env-file %S/state/minecraft.env \
+    --env-file %S/state/minecraft-extra.env \
+    ${MINECRAFT_SERVER_IMAGE}
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/minecraft.ctr-id -t 90
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/minecraft.ctr-id
+PIDFile=%t/minecraft.pid
+Type=forking
+SyslogIdentifier=%u
+
+[Install]
+WantedBy=default.target

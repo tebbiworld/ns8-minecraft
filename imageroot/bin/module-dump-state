@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2026 tebbi
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+# Called by the core before the backup: flush the world to disk and pause
+# auto-saving so restic gets a consistent copy of the minecraft-data volume.
+# A stopped server is fine too (nothing to flush).
+
+exec 1>&2
+if podman exec minecraft rcon-cli save-all flush >/dev/null 2>&1; then
+    podman exec minecraft rcon-cli save-off >/dev/null 2>&1 && echo "world flushed, auto-save paused for the backup"
+else
+    echo "server not running or RCON unavailable: backing up the volume as is"
+fi
+exit 0

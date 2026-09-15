@@ -1,0 +1,22 @@
+{
+  "name": "Minecraft Server",
+  "description": {
+    "en": "Minecraft server (Java Edition, optional Bedrock support via Geyser) — Vanilla, Paper or Fabric from the itzg image, with whitelist, operators and world backup",
+    "de": "Minecraft-Server (Java Edition, optional Bedrock-Unterstützung via Geyser) — Vanilla, Paper oder Fabric aus dem itzg-Image, mit Whitelist, Operatoren und Welt-Backup"
+  },
+  "categories": [
+    "multimedia"
+  ],
+  "authors": [
+    {
+      "name": "tebbi",
+      "email": "info@ebbinghaus.world"
+    }
+  ],
+  "docs": {
+    "documentation_url": "https://docker-minecraft-server.readthedocs.io/",
+    "bug_url": "https://github.com/tebbiworld/ns8-minecraft/issues",
+    "code_url": "https://github.com/tebbiworld/ns8-minecraft"
+  },
+  "source": "ghcr.io/tebbiworld/minecraft"
+}

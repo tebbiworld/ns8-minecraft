@@ -1,0 +1,32 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "get-configuration output",
+    "$id": "http://schema.nethserver.org/minecraft/get-configuration-output.json",
+    "description": "Get Minecraft server configuration",
+    "type": "object",
+    "properties": {
+        "eula_accepted": { "type": "boolean" },
+        "server_type": { "type": "string" },
+        "version": { "type": "string" },
+        "memory_mb": { "type": "integer" },
+        "game_port": { "type": "integer" },
+        "bedrock_enabled": { "type": "boolean" },
+        "bedrock_port": { "type": "integer" },
+        "motd": { "type": "string" },
+        "gamemode": { "type": "string" },
+        "difficulty": { "type": "string" },
+        "max_players": { "type": "integer" },
+        "pvp": { "type": "boolean" },
+        "online_mode": { "type": "boolean" },
+        "whitelist": { "type": "array", "items": { "type": "string" } },
+        "ops": { "type": "array", "items": { "type": "string" } },
+        "seed": { "type": "string" },
+        "timezone": { "type": "string" },
+        "extra_env": { "type": "array", "items": { "type": "string" } },
+        "server_running": { "type": "boolean" },
+        "server_version": { "type": "string" },
+        "players_online": { "type": ["integer", "null"] },
+        "players_max": { "type": ["integer", "null"] },
+        "node_ip": { "type": "string" }
+    }
+}

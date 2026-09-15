@@ -1,0 +1,102 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Configure minecraft",
+    "$id": "http://nethserver.org/json-schema/task/input/minecraft/configure-module",
+    "description": "Configure the Minecraft server module",
+    "examples": [
+        {
+            "eula_accepted": true,
+            "server_type": "PAPER",
+            "version": "LATEST",
+            "memory_mb": 2048,
+            "game_port": 25565,
+            "bedrock_enabled": true,
+            "bedrock_port": 19132,
+            "motd": "Family server",
+            "gamemode": "survival",
+            "difficulty": "normal",
+            "max_players": 20,
+            "pvp": true,
+            "online_mode": true,
+            "whitelist": ["Steve", "Alex"],
+            "ops": ["Steve"],
+            "seed": "",
+            "timezone": "Europe/Berlin",
+            "extra_env": ["VIEW_DISTANCE=12"]
+        }
+    ],
+    "type": "object",
+    "required": ["eula_accepted", "server_type", "memory_mb", "game_port"],
+    "properties": {
+        "eula_accepted": {
+            "type": "boolean",
+            "title": "Minecraft EULA accepted",
+            "description": "The server only starts after the Minecraft End User License Agreement (https://aka.ms/MinecraftEULA) has been accepted."
+        },
+        "server_type": {
+            "type": "string",
+            "title": "Server type",
+            "description": "VANILLA (Mojang), PAPER (high performance, plugins, required for Bedrock support) or FABRIC (mods).",
+            "enum": ["VANILLA", "PAPER", "FABRIC"]
+        },
+        "version": {
+            "type": "string",
+            "title": "Minecraft version",
+            "description": "LATEST (newest release at every start), SNAPSHOT or a fixed version such as 1.21.8.",
+            "pattern": "^(LATEST|SNAPSHOT|[0-9][0-9A-Za-z.\\-]*)$",
+            "default": "LATEST"
+        },
+        "memory_mb": {
+            "type": "integer",
+            "title": "Java heap (MB)",
+            "minimum": 512,
+            "maximum": 262144
+        },
+        "game_port": {
+            "type": "integer",
+            "title": "Java Edition port (TCP)",
+            "minimum": 1024,
+            "maximum": 65535
+        },
+        "bedrock_enabled": {
+            "type": "boolean",
+            "title": "Bedrock support",
+            "description": "Install Geyser and Floodgate (Paper only) so Bedrock clients (phones, consoles, Windows app) can join."
+        },
+        "bedrock_port": {
+            "type": "integer",
+            "title": "Bedrock port (UDP)",
+            "minimum": 1024,
+            "maximum": 65535
+        },
+        "motd": { "type": "string", "title": "Message of the day", "maxLength": 200 },
+        "gamemode": { "type": "string", "enum": ["survival", "creative", "adventure", "spectator"] },
+        "difficulty": { "type": "string", "enum": ["peaceful", "easy", "normal", "hard"] },
+        "max_players": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "pvp": { "type": "boolean" },
+        "online_mode": {
+            "type": "boolean",
+            "title": "Online mode",
+            "description": "Verify players against Mojang's authentication servers (recommended). Off for offline/LAN-only servers."
+        },
+        "whitelist": {
+            "type": "array",
+            "title": "Whitelist",
+            "description": "Player names allowed to join. Empty: everybody may join.",
+            "items": { "type": "string", "pattern": "^[A-Za-z0-9_]{3,16}$" }
+        },
+        "ops": {
+            "type": "array",
+            "title": "Operators",
+            "items": { "type": "string", "pattern": "^[A-Za-z0-9_]{3,16}$" }
+        },
+        "seed": { "type": "string", "title": "World seed", "maxLength": 100 },
+        "timezone": { "type": "string", "title": "Timezone", "default": "UTC" },
+        "extra_env": {
+            "type": "array",
+            "title": "Additional server variables",
+            "description": "KEY=VALUE entries passed to the itzg/minecraft-server image (e.g. VIEW_DISTANCE=12, MODRINTH_PROJECTS=...). Applied after the generated settings.",
+            "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*=" }
+        }
+    }
+}

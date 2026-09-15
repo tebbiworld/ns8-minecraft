@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2026 tebbi
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+# Called by the core after the backup: resume auto-saving.
+
+exec 1>&2
+podman exec minecraft rcon-cli save-on >/dev/null 2>&1 && echo "auto-save resumed"
+exit 0
