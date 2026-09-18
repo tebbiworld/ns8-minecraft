@@ -17,7 +17,7 @@ Minecraft Server is a community application from the [[ns8:tebbiworld_repository
 =====Architecture=====
 
 ^ Container ^ Image ^ Purpose ^
-| ''minecraft'' | ''docker.io/itzg/minecraft-server:<version>-java25'' (pinned) | game server; 25565/tcp (Java) and 19132/udp (Bedrock) published on the configured ports; RCON 25575 internal only |
+| ''minecraft'' | ''%%docker.io/itzg/minecraft-server:<version>-java25%%'' (pinned) | game server; 25565/tcp (Java) and 19132/udp (Bedrock) published on the configured ports; RCON 25575 internal only |
 
 ^ Volume ^ Purpose ^ Backup ^
 | ''minecraft-data'' | server jar, worlds, plugins/mods, ''server.properties'', ''whitelist.json'', ''ops.json'' | yes |
@@ -55,7 +55,7 @@ api-cli run module/minecraft1/run-command --data '{"command":"list"}'
 </code>
 
 =====Connecting=====
-Java Edition: ''<node IP or name>:<port>''. Bedrock Edition: the same host with the UDP port (add the server manually in the Bedrock client). For players outside the LAN forward the port(s) on the router to the node; the node firewall is opened by the module.
+Java Edition: ''%%<node IP or name>:<port>%%''. Bedrock Edition: the same host with the UDP port (add the server manually in the Bedrock client). For players outside the LAN forward the port(s) on the router to the node; the node firewall is opened by the module.
 
 =====Backup and restore=====
 The NS8 backup contains the module settings and the ''minecraft-data'' volume. Right before the snapshot the module flushes the world to disk and pauses auto-saving (''save-all flush'', ''save-off''), afterwards auto-saving resumes (''save-on''); a stopped server is backed up as is. A restore recreates the instance from the snapshot, re-applies the settings and the firewall service and starts the server on the restored world.
