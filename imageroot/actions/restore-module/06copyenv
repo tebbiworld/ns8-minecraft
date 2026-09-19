@@ -13,9 +13,16 @@ import json
 import sys
 
 import agent
+import modsecrets
 
 request = json.load(sys.stdin)
 env = request["environment"]
-keep = ["RCON_PASSWORD", "EULA_ACCEPTED", "SERVER_TYPE", "MC_VERSION", "MEMORY_MB", "GAME_PORT", "BEDROCK_ENABLED",
+keep = ["EULA_ACCEPTED", "SERVER_TYPE", "MC_VERSION", "MEMORY_MB", "GAME_PORT", "BEDROCK_ENABLED",
         "BEDROCK_PORT", "MOTD", "GAMEMODE", "DIFFICULTY", "MAX_PLAYERS", "PVP", "ONLINE_MODE", "WHITELIST", "OPS", "SEED", "TZ"]
 agent.mset_env({k: env[k] for k in keep if k in env})
+
+# The RCON password comes back with the restored state/passwords.env. A backup
+# taken with module version 1.0.0 still carries it in the environment.
+if env.get("RCON_PASSWORD"):
+    modsecrets.write({"RCON_PASSWORD": env["RCON_PASSWORD"]})
+    print("restored the legacy RCON password from the backup environment into passwords.env", file=sys.stderr)
