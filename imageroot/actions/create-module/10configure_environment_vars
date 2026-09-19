@@ -10,12 +10,10 @@
 # run-command action rely on it). Everything else is applied by
 # configure-module.
 
-import secrets
 
 import agent
 
 agent.mset_env({
-    "RCON_PASSWORD": secrets.token_urlsafe(24),
     "EULA_ACCEPTED": "false",
     "SERVER_TYPE": "PAPER",
     "MC_VERSION": "LATEST",
