@@ -16,7 +16,9 @@
   "docs": {
     "documentation_url": "https://docker-minecraft-server.readthedocs.io/",
     "bug_url": "https://github.com/tebbiworld/ns8-minecraft/issues",
-    "code_url": "https://github.com/tebbiworld/ns8-minecraft"
+    "code_url": "https://github.com/tebbiworld/ns8-minecraft",
+    "relnotes_url": "https://github.com/tebbiworld/ns8-minecraft/releases",
+    "terms_url": "https://www.minecraft.net/en-us/eula"
   },
   "source": "ghcr.io/tebbiworld/minecraft"
 }
