@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0 — 2026-09-19
+
+Alignment with the NethServer module conventions (NethServer/agents skills).
+
+### Changed
+
+- **Secrets moved out of the module environment.** The RCON password is now kept in `state/passwords.env` (mode 0600) instead of `state/environment`, which NS8 mirrors to Redis in plain text. Existing installations are migrated on update; the value does not change. The generated `minecraft.env` is private (0600).
+- The module backup includes `state/passwords.env`; restore reads the password from it (backups taken with 1.0.0 are still restorable).
+- `update-module` only restarts a running instance.
+
+### Added
+
+- Robot Framework tests (install, update from the previous release, backup and restore, each with a console command over RCON) run on real NS8 nodes through `stephdl/ns8-ci-actions`.
+
 ## 1.0.0 — 2026-09-15
 
 - Initial release: itzg/minecraft-server (pinned, Java 25 — Minecraft 26.1+ requires it) with Paper /

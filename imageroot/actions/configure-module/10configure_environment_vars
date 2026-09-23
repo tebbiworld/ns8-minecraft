@@ -15,6 +15,7 @@ import os
 import sys
 
 import agent
+import modsecrets
 
 data = json.load(sys.stdin)
 
@@ -68,7 +69,7 @@ lines = [
     "SERVER_PORT=25565",
     "ENABLE_RCON=true",
     "RCON_PORT=25575",
-    f"RCON_PASSWORD={os.environ['RCON_PASSWORD']}",
+    f"RCON_PASSWORD={modsecrets.get('RCON_PASSWORD')}",
     # Re-apply the settings-derived server.properties at every start, so a
     # change on the settings page wins over a hand-edited file.
     "OVERRIDE_SERVER_PROPERTIES=true",
@@ -99,6 +100,8 @@ lines.append("REMOVE_OLD_MODS_INCLUDE=Geyser-Spigot*.jar,floodgate-spigot*.jar")
 if bedrock:
     lines.append("PLUGINS=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot,"
                  "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot")
+# minecraft.env carries the RCON password: keep it private
+os.umask(0o077)
 with open("minecraft.env.tmp", "w") as fp:
     fp.write("\n".join(lines) + "\n")
 os.replace("minecraft.env.tmp", "minecraft.env")
