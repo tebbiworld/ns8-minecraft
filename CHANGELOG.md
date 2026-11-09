@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 — 2026-11-09
+
+- itzg/minecraft-server 2026.9.1-java25 → 2026.10.1-java25 (automatic upstream update).
+
 ## 1.1.0 — 2026-09-19
 
 Alignment with the NethServer module conventions (NethServer/agents skills).

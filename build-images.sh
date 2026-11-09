@@ -16,7 +16,7 @@ reponame="minecraft"
 # the org.nethserver.images label. The image downloads the requested server
 # flavour/version (Vanilla, Paper, Fabric, ...) into /data at start and is
 # configured entirely through environment variables.
-minecraft_image="docker.io/itzg/minecraft-server:2026.9.1-java25"
+minecraft_image="docker.io/itzg/minecraft-server:2026.10.1-java25"
 
 runtime_images=(
     "${minecraft_image}"
